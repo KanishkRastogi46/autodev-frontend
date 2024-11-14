@@ -1,64 +1,94 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from 'react';
+import axios from 'axios';
 
-export default function HomePage() {
-  const [user, setUser] = useState(null)
-  const router = useRouter()
+const PromptPage = () => {
+  const [prompt, setPrompt] = useState('');
+  const [image, setImage] = useState(null);
+  const [response, setResponse] = useState('');
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    // Simulating fetching user data
-    // Replace this with your actual user data fetching logic
-    const fetchUser = async () => {
-      try {
-        // Simulating an API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setUser({ name: 'John Doe' }) // Replace with actual user data
-      } catch (error) {
-        console.error('Failed to fetch user data', error)
-        router.push('/login')
-      }
-    }
+  const handlePromptChange = (e) => {
+    setPrompt(e.target.value);
+  };
 
-    fetchUser()
-  }, [router])
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
-  const handleLogout = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setResponse('');
+
+    // const formData = new FormData();
+    // formData.append('prompt', prompt);
+    // if (image) {
+    //   formData.append('image', image);
+    // }
+
     try {
-      // Simulating logout API call
-      // Replace this with your actual logout logic
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Logged out successfully')
-      router.push('/login')
-    } catch (error) {
-      console.error('Logout failed', error)
+      const res = await axios.post('http://localhost:5000/chat', {prompt});
+      if (res.data.success) setResponse(res.data.message);
+      else setResponse("Sorry no response at the moment")
+    } catch (err) {
+      console.log(`Error message : ${err.message}`);
     }
-  }
-
-  if (!user) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
-  }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-0">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Welcome Home</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-lg">
-            Hello, {user.name}! You're successfully logged in.
-          </p>
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <Button onClick={handleLogout}>
-            Logout
-          </Button>
-        </CardFooter>
-      </Card>
+    <div className="flex items-center justify-center min-h-screen bg-gray-950">
+      <div className="w-full max-w-md p-8 space-y-4 bg-gray-800 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center">Send a Prompt</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-medium text-gray-400" htmlFor="prompt">
+              Prompt
+            </label>
+            <textarea
+              className="text-black w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              id="prompt"
+              name="prompt"
+              value={prompt}
+              onChange={handlePromptChange}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-sm font-medium text-gray-400" htmlFor="image">
+              Upload Image
+            </label>
+            <input
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </div>
+          <button
+            className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+            type="submit"
+          >
+            Send
+          </button>
+        </form>
+        {response && (
+          <div className="mt-4 p-4 bg-green-100 text-green-800 rounded">
+            <h3 className="text-lg font-semibold">Response:</h3>
+            <p>{response}</p>
+          </div>
+        )}
+        {error && (
+          <div className="mt-4 p-4 bg-red-100 text-red-800 rounded">
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default PromptPage;
