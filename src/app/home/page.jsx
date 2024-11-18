@@ -4,10 +4,11 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const PromptPage = () => {
-  const [prompt, setPrompt] = useState('');
-  const [image, setImage] = useState(null);
-  const [response, setResponse] = useState('');
-  const [error, setError] = useState('');
+  let [prompt, setPrompt] = useState('');
+  let [image, setImage] = useState(null);
+  let [response, setResponse] = useState([]);
+  let [show, setShow] = useState(``);
+  let [error, setError] = useState('');
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
@@ -22,16 +23,13 @@ const PromptPage = () => {
     setError('');
     setResponse('');
 
-    // const formData = new FormData();
-    // formData.append('prompt', prompt);
-    // if (image) {
-    //   formData.append('image', image);
-    // }
-
     try {
-      const res = await axios.post('http://localhost:5000/chat', {prompt});
-      if (res.data.success) setResponse(res.data.message);
-      else setResponse("Sorry no response at the moment")
+      const res = await axios.post('http://localhost:5000/users/chat', {prompt});
+      if (res.data.success) {
+        setResponse(res.data.message.split("\n"));
+      }
+      else setError("Sorry no response at the moment")
+      
     } catch (err) {
       console.log(`Error message : ${err.message}`);
     }
@@ -78,7 +76,19 @@ const PromptPage = () => {
         {response && (
           <div className="mt-4 p-4 bg-green-100 text-green-800 rounded">
             <h3 className="text-lg font-semibold">Response:</h3>
-            <p>{response}</p>
+            <div>
+              {
+                response.map((item, index)=>{
+                  return (
+                    <>
+                      <dir key={index}>
+                        {item}
+                      </dir>
+                    </>
+                  )
+                })
+              }
+            </div>
           </div>
         )}
         {error && (
