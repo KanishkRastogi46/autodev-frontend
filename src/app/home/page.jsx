@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { FaFileUpload } from "react-icons/fa";
 
 const PromptPage = () => {
   let [prompt, setPrompt] = useState('');
@@ -12,6 +13,7 @@ const PromptPage = () => {
   let [steps, setSteps] = useState('');
   let [note, setNote] = useState('');
   let [error, setError] = useState('');
+  let [load, setLoad] = useState(false);
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
@@ -28,7 +30,7 @@ const PromptPage = () => {
     setCode('');
     setNote('');
     setSteps('');
-
+    setLoad(true);
     try {
       const res = await axios.post('http://localhost:5000/users/chat', {prompt});
       if (res.data.success) {
@@ -39,62 +41,31 @@ const PromptPage = () => {
         setNote(res.data.message.Note.split("\n"))
       }
       else setError("Sorry no response at the moment")
-      
+      setPrompt("")
     } catch (err) {
       console.log(`Error message : ${err.message}`);
     }
+    setLoad(false);
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-950 p-8 gap-8">
-      <div className="w-full max-w-md p-8 space-y-4 bg-gray-800 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center">Send a Prompt</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-400" htmlFor="prompt">
-              Prompt
-            </label>
-            <textarea
-              className="text-black w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              id="prompt"
-              name="prompt"
-              value={prompt}
-              onChange={handlePromptChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-400" htmlFor="image">
-              Upload Image
-            </label>
-            <input
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </div>
-          <button
-            className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
-            type="submit"
-          >
-            Send
-          </button>
-        </form>
-      </div>
-      <div className="flex justify-around space-x-4 flex-wrap">
+      {
+        load && <div className="w-16 h-16 border-t-2 border-l-2 border-gray-500 border-solid rounded-full border-t-transparent animate-spin my-auto"></div>
+      }
+      <div className="flex flex-col justify-center items-center space-y-8">
         {code && (
-          <div className="mt-4 p-4 bg-orange-700 text-white rounded w-[33vw] h-[40vh] overflow-auto">
+          <div className="mt-4 p-4 bg-gray-700 text-white rounded w-1/2 h-auto overflow-x-auto">
             <h3 className="text-2xl font-bold">Code:</h3><br/>
             <div>
               {
                 code.map((item, index)=>{
                   return (
-                    <div key={index}>
-                    {item}
-                    </div>
+                    <code key={index}>
+                      <pre>
+                        {item}
+                      </pre>
+                    </code>
                   )
                 })
               }
@@ -102,7 +73,7 @@ const PromptPage = () => {
           </div>
         )}
         {steps && (
-          <div className="mt-4 p-4 bg-orange-600 text-white rounded w-[33vw] h-[40vh] overflow-auto">
+          <div className="mt-4 p-4 bg-gray-700 text-white rounded w-1/2 h-auto">
             <h3 className="text-2xl font-bold">Explanation:</h3><br/>
             <div>
               {
@@ -118,7 +89,7 @@ const PromptPage = () => {
           </div>
         )}
         {note && (
-          <div className="mt-4 p-4 bg-orange-500 text-white rounded w-[33vw] h-[40vh] overflow-auto">
+          <div className="mt-4 p-4 bg-gray-700 text-white rounded w-1/2 h-auto">
             <h3 className="text-2xl font-bold">Note*:</h3><br/>
             <div>
               {
@@ -138,6 +109,33 @@ const PromptPage = () => {
             <p>{error}</p>
           </div>
         )}
+      </div>
+      <div className="w-full max-w-2xl px-8 py-4 bg-gray-800 rounded-2xl shadow-md mt-auto"> 
+	      <div className="flex items-center space-x-2"> 
+          <textarea 
+              className="flex-grow text-black p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 			  
+              placeholder="Type your message here..." 
+              rows="1" 
+              value={prompt} 
+              onChange={handlePromptChange} 
+          />
+          <label htmlFor="image-upload" className="flex items-center justify-center p-3 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500" > 
+            {/* <i className="fas fa-image text-gray-500 hover:text-gray-700"></i>  */}
+            <FaFileUpload />
+            <input 
+                  id="image-upload" 
+                  type="file" 
+                  accept='image/*'
+                  className="hidden" 
+                  onChange={handleImageChange} 
+            /> 
+          </label> 
+          <button 
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600" 
+            onClick={handleSubmit} 
+          > Send 
+          </button> 
+        </div>
       </div>
     </div>
   );
