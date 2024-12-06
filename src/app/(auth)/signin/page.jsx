@@ -38,8 +38,8 @@ function SigninForm() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:5000/users/login', formData);
-      console.log('Registration successful:', response.data);
+      const response = await axios.post('http://localhost:8000/auth/token', formData);
+      console.log('Signin successful:', response.data);
       if (response.data.success) router.push("/home")
       // Additional actions after successful registration
     } catch (error) {
