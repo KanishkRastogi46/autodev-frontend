@@ -3,8 +3,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import useUserContext from '@/lib/user/userContext';
 
 function SigninForm() {
+  let {setUser} = useUserContext()
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -40,7 +43,11 @@ function SigninForm() {
     try {
       const response = await axios.post('http://localhost:8000/auth/token', formData);
       console.log('Signin successful:', response.data);
-      if (response.data.success) router.push("/home")
+      if (response.data.success) {
+        localStorage.setItem("accesstoken", response.data.access_token)
+        setUser(response.data.user)
+        router.push("/")
+      }
       // Additional actions after successful registration
     } catch (error) {
       console.error('Error during registration:', error);

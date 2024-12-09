@@ -32,13 +32,13 @@ const PromptPage = () => {
     setSteps('');
     setLoad(true);
     try {
-      const res = await axios.post('http://localhost:5000/users/chat', {prompt});
+      const res = await axios.post('http://localhost:8000/users/chat', {prompt});
       if (res.data.success) {
-        console.log(res.data.message)
-        setResponse(res.data.message);
-        setCode(res.data.message.Code.split("\n"))
-        setSteps(res.data.message.Explanation.split("\n"))
-        setNote(res.data.message.Note.split("\n"))
+        console.log(res.data)
+        setResponse(res.data);
+        setCode(res.data.Code.split("\n"))
+        setSteps(res.data.Explanation.split("\n"))
+        setNote(res.data.Note.split("\n"))
       }
       else setError("Sorry no response at the moment")
       setPrompt("")
