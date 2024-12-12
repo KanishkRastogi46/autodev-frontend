@@ -46,7 +46,7 @@ function SigninForm() {
       if (response.data.success) {
         localStorage.setItem("accesstoken", response.data.access_token)
         setUser(response.data.user)
-        router.push("/")
+        router.push("/prompt-page")
       }
       // Additional actions after successful registration
     } catch (error) {
@@ -66,7 +66,7 @@ function SigninForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-950 p-4 sm:p-6 lg:p-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 to-black p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-md space-y-6 sm:max-w-lg lg:max-w-xl">
         <h2 className="text-2xl font-bold text-center">Signin</h2>
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
