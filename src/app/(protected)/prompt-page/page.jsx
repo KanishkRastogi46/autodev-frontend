@@ -1,36 +1,13 @@
 'use client';
 
-import { useState , useEffect , useRef } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import useUserContext from '@/lib/user/userContext';
-import SigninForm from '../(auth)/signin/page';
-import { useRouter } from 'next/navigation';
+import SigninForm from '@/app/(auth)/signin/page';
 import Navbar from '@/components/Navbar';
 
 const PromptPage = () => {
-  let {user, setUser} = useUserContext();
-
-  let fetchUser = async () => {
-    try {
-      let res = await axios.get("http://localhost:8000/auth", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accesstoken")}`
-        }
-      })
-      if (res.data.email.trim() !== "") setUser(res.data)
-      else router.push("/signin")
-      console.log(res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(()=>{
-    fetchUser()
-  }, [])
-
-  let divRef = useRef();
-  let router = useRouter();
+  let {user} = useUserContext();
 
   let [prompt, setPrompt] = useState('');
   let [response, setResponse] = useState('');
@@ -48,7 +25,7 @@ const PromptPage = () => {
   const handleCopy = function () {
     const str = code.join("\n");
     console.log(str);
-    window.navigator.clipboard.writeText(str).then(()=>console.log("copied"))
+    window.navigator.clipboard.writeText(str).then(()=>console.log("copied")).catch(err=>console.log(err.message))
   }
 
   const handleSubmit = async (e) => {
@@ -60,7 +37,11 @@ const PromptPage = () => {
     setSteps('');
     setLoad(true);
     try {
-      const res = await axios.post('http://localhost:8000/users/chat', {prompt});
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_DOMAIN}/users/chat`, {prompt}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accesstoken")}`
+        }
+      });
       if (res.data.success) {
         console.log(res.data)
         setResponse(res.data);
@@ -72,19 +53,19 @@ const PromptPage = () => {
       setPrompt("")
     } catch (err) {
       console.log(`Error message : ${err.message}`);
+      setError("Sorry no response at the moment")
     }
     setLoad(false);
   };
 
-  // console.log(user)
+  console.log(user.email)
 
-  if (user.email === "") {
+  if (!user.email) {
     return (
       <div className="w-full h-screen text-white bg-gray-100">
         <SigninForm/>
       </div>
     )
-    // router.push("/signin")
   }
 
   return (
@@ -97,7 +78,7 @@ const PromptPage = () => {
         {code && (
           <div className="mt-4 p-4 bg-gray-700 text-white rounded md:w-1/2 w-[90vw] h-auto overflow-x-auto">
             <h3 className="text-2xl font-bold">Code:</h3><br/>
-            <div ref={divRef} className='bg-neutral-800 p-2 rounded-lg overflow-x-auto'>
+            <div className='bg-neutral-800 p-2 rounded-lg overflow-x-auto'>
               {
                 code.map((item, index)=>{
                   return (

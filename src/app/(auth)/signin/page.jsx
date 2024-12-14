@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import useUserContext from '@/lib/user/userContext';
 
 function SigninForm() {
+
   let {setUser} = useUserContext()
 
   const [formData, setFormData] = useState({
@@ -41,10 +42,11 @@ function SigninForm() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/auth/token', formData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_DOMAIN}/auth/token`, formData);
       console.log('Signin successful:', response.data);
       if (response.data.success) {
         localStorage.setItem("accesstoken", response.data.access_token)
+        localStorage.setItem("user", response.data.user)
         setUser(response.data.user)
         router.push("/prompt-page")
       }

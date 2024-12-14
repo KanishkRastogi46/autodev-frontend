@@ -46,7 +46,7 @@ function SignupForm() {
     setIsLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/users/register', formData);
+      const response = await axios.post(`${process.env.process.env.NEXT_PUBLIC_DOMAIN}/users/register`, formData);
       console.log('Registration successful:', response.data);
       if (response.data.success) router.push("/signin")
       // Additional actions after successful registration

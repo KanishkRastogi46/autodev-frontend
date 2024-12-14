@@ -1,11 +1,14 @@
 "use client"
-// import Image from "next/image";
+
+import useUserContext from '@/lib/user/userContext';
 import React, {useCallback, useState} from 'react'
 import {useDropzone} from 'react-dropzone'
 import Navbar from '@/components/Navbar';
-
+import SigninForm from '@/app/(auth)/signin/page';
 
 export default function SketchToCode() {
+  let {user} = useUserContext();
+
   let [response, setResponse] = useState("");
   let [filename, setFilename] = useState("");
   let [file, setFile] = useState("");
@@ -28,20 +31,37 @@ export default function SketchToCode() {
     setResponse("")
     setLoading(true)
     try {
-      let res = await fetch("http://localhost:8000/upload", {
+      let res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/upload`, {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("accesstoken")}`
+        },
         body: formData
       })
       if (res.ok) {
         let data = await res.json()
         console.log(data)
-        setResponse(data)
+        setResponse(data.split("\n"))
       }
     } catch (error) {
       setError(error.message)
       console.log(error)
     }
     setLoading(false)
+  }
+
+  const handleCopy = function () {
+    window.navigator.clipboard.writeText(response.join("\n")).then(()=>console.log("copied")).catch(err=>console.log(err))
+  }
+
+  console.log(user.email)
+
+  if (!user.email) {
+    return (
+      <div className="w-full h-screen text-white bg-gray-100">
+        <SigninForm/>
+      </div>
+    )
   }
 
   return (
@@ -52,15 +72,28 @@ export default function SketchToCode() {
       }
       {
         response && 
-        <section className='bg-zinc-700 text-white p-8 h-auto w-[80vw] rounded-lg'>
-          <pre className='bg-teal-950 p-2 w-full overflow-x-auto'>{response}</pre>
+        <div className="mt-4 p-4 bg-gray-700 text-white rounded md:w-1/2 w-[90vw] h-auto overflow-x-auto">
+          <h3 className="text-2xl font-bold">Response:</h3><br/>
+          <div className='bg-neutral-800 p-2 rounded-lg overflow-x-auto'>
+            {
+              response.map((item, index)=>{
+                return (
+                  <code key={index}>
+                    <pre>
+                      {item}
+                    </pre>
+                  </code>
+                )
+              })
+            }
+          </div>
           <button 
-              className="bg-blue-500 text-white p-2 rounded-md m-auto hover:bg-blue-600 mt-4"
-              onClick={handleCopy}
-            >
-              Copy
-            </button>
-        </section> 
+            className="bg-blue-500 text-white p-2 rounded-md m-auto hover:bg-blue-600 mt-4"
+            onClick={handleCopy}
+          >
+            Copy
+          </button>
+      </div> 
       }
       {
         error && 
