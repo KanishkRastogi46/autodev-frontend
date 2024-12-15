@@ -65,7 +65,7 @@ export default function SketchToCode() {
   }
 
   return (
-    <div className='flex flex-col justify-center items-center gap-12 min-h-screen bg-gradient-to-r from-indigo-900 to-black p-4'>
+    <div className='flex flex-col justify-center items-center gap-12 min-h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700 p-4'>
       <Navbar/>
       {
         loading && <div className="w-16 h-16 border-t-2 border-l-2 border-gray-500 border-solid rounded-full border-t-transparent animate-spin my-auto"></div>

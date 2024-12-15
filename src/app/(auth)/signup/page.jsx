@@ -67,7 +67,7 @@ function SignupForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 to-black p-4 sm:p-6 lg:p-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-md space-y-6 sm:max-w-lg lg:max-w-xl">
         <h2 className="text-2xl font-bold text-center">Signup</h2>
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}

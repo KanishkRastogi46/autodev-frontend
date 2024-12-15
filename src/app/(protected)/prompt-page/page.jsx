@@ -69,7 +69,7 @@ const PromptPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 to-black p-8 gap-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700 p-8 gap-8">
       <Navbar/>
       {
         load && <div className="w-16 h-16 border-t-2 border-l-2 border-gray-500 border-solid rounded-full border-t-transparent animate-spin my-auto"></div>

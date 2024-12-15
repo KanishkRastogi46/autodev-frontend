@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar"
 export default function Home() {
     return (
         <>
-            <div className="bg-gradient-to-r from-indigo-900 to-black min-h-screen flex flex-col"> 
+            <div className="bg-gradient-to-r from-indigo-700 via-black to-indigo-700 min-h-screen flex flex-col"> 
                 {/* Navbar */} 
                 <Navbar/>
                 {/* Hero Section */} 
