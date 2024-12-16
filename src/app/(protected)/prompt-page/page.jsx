@@ -10,8 +10,6 @@ const PromptPage = () => {
   let {user} = useUserContext();
 
   let [prompt, setPrompt] = useState('');
-  let [response, setResponse] = useState('');
-  let [lang, setLang] = useState('');
   let [code, setCode] = useState('');
   let [steps, setSteps] = useState('');
   let [note, setNote] = useState('');
@@ -24,14 +22,12 @@ const PromptPage = () => {
 
   const handleCopy = function () {
     const str = code.join("\n");
-    console.log(str);
     window.navigator.clipboard.writeText(str).then(()=>console.log("copied")).catch(err=>console.log(err.message))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setResponse('');
     setCode('');
     setNote('');
     setSteps('');
@@ -43,8 +39,6 @@ const PromptPage = () => {
         }
       });
       if (res.data.success) {
-        console.log(res.data)
-        setResponse(res.data);
         setCode(res.data.Code.split("\n"))
         setSteps(res.data.Explanation.split("\n"))
         setNote(res.data.Note.split("\n"))
@@ -58,7 +52,6 @@ const PromptPage = () => {
     setLoad(false);
   };
 
-  console.log(user.email)
 
   if (!user.email) {
     return (

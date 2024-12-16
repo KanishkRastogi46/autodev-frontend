@@ -16,7 +16,6 @@ export default function SketchToCode() {
   let [error, setError] = useState("");
 
   const onDrop = useCallback((acceptedFiles) => {
-    console.log(acceptedFiles)
     setFile(acceptedFiles[0])
     setFilename(acceptedFiles[0].name)
   }, [])
@@ -40,7 +39,6 @@ export default function SketchToCode() {
       })
       if (res.ok) {
         let data = await res.json()
-        console.log(data)
         setResponse(data.split("\n"))
       }
     } catch (error) {

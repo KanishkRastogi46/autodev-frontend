@@ -7,7 +7,7 @@ const Editor = dynamic(()=>import("@monaco-editor/react"), {
 })
 
 import useUserContext from '@/lib/user/userContext';
-import { useState , useRef } from 'react';
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Select from 'react-select';
 import SigninForm from '@/app/(auth)/signin/page';
@@ -16,16 +16,15 @@ import axios from 'axios';
 export default function CodeEditor() {
   let {user} = useUserContext();
 
-  let editorRef = useRef();
-
-  let options = [
+  const options = [
     { value: 'javascript', label: 'javascript', version: "18.15.0" },
     { value: 'typescript', label: 'typescript', version: "5.0.3" },
     { value: 'python', label: 'python', version: "3.10.0" },
     { value: 'java', label: 'java', version: "15.0.2" },
-    { value: 'cpp', label: 'cpp', version: "10.2.0" },
+    { value: 'c++', label: 'c++', version: "10.2.0" },
     { value: 'csharp', label: 'csharp', version: "6.12.0" },
     { value: 'php', label: 'php', version: "8.2.3" },
+    { value: 'html', label: 'html', version: '5' }
   ];
 
   let [code, setCode] = useState("console.log('Hello World');");
@@ -43,22 +42,15 @@ export default function CodeEditor() {
 
   function handleEditorDidMount(editor, monaco) {
     console.log('onMount: the editor instance:', editor);
-    // console.log('onMount: the monaco instance:', monaco);
-    // editorRef.current = editor;
-    // editor.focus();
-  }
-
-  const handleChange = function(str) {
-    console.log("on change");
-    if (lang.value === "html") setHtmlcode(str);
-    else setCode(str);
+    
   }
 
   const handleRun = async function () {
     if (lang.value === "html") {
-      setTimeout(()=>{}, 3000)
+      setHtmlcode(code)
     }
     else {
+      console.log(code)
       setReqbody({
         language: lang.value,
         version: lang.version,
@@ -78,8 +70,6 @@ export default function CodeEditor() {
     }
   }
 
-  console.log(user.email)
-
   if (!user.email) {
     return (
       <div className="w-full h-screen text-white bg-gray-100">
@@ -89,24 +79,23 @@ export default function CodeEditor() {
   }
 
   return (
-        <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-r ffrom-indigo-700 via-black to-indigo-700 p-8 gap-8'>
+        <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700 p-8 gap-8'>
           <Navbar/>
           <h1 className='font-light text-white text-3xl text-center capitalize tracking-wide mt-20'>Try the Code here</h1>
 
           <Select
-              defaultValue={lang}
+              value={lang}
               onChange={setLang}
               options={options}
-              className='text-black'
+              className='text-black w-[50vw]'
           />
           <Editor 
-              className=''
               height="80vh" 
               width={"80vw"}
               theme='vs-dark'
               language={lang.value}
               value={code}
-              onChange={handleChange}
+              onChange={(str)=>setCode(str)}
               onMount={handleEditorDidMount}
           />
           {
@@ -129,14 +118,16 @@ export default function CodeEditor() {
             </div>
           }
 
+          <div>
           {
             htmlcode &&
             <div 
               id="html-preview" 
               dangerouslySetInnerHTML={{__html: htmlcode}}
-              className='max-h-screen w-full'
+              className='mt-16 h-auto w-full border-2 border-white pointer-events-none'
             />
           }
+          </div>
           
         </div>
     );
