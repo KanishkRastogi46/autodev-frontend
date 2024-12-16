@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 
@@ -27,12 +27,14 @@ export default function Page() {
     },[])
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700">
-            <div className="">
-                <h1 className="bg-white text-black p-2 font-bold text-3xl text-center rounded-lg">{msg}</h1>
-                <h1 className="text-white p-2 font-semibold text-xl text-center">Now got to <Link href={"/signin"} className="underline hover:text-blue-500">Signin page</Link></h1>
+        <Suspense fallback={<div>Loading...</div>}>
+            <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-r from-indigo-700 via-black to-indigo-700">
+                <div className="">
+                    <h1 className="bg-white text-black p-2 font-bold text-3xl text-center rounded-lg">{msg}</h1>
+                    <h1 className="text-white p-2 font-semibold text-xl text-center">Now got to <Link href={"/signin"} className="underline hover:text-blue-500">Signin page</Link></h1>
+                </div> 
             </div>
-            
-        </div>
+        </Suspense>
+        
     )
 }
